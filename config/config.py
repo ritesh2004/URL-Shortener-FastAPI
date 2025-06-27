@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     DESCRIPTION: str = "A simple URL shortener API built with FastAPI and SQLModel."
     VERSION: str = "1.0.0"
     
+    HOST_URL: str = "http://localhost:8000"  # Base URL for the application
+    
     EXPIRATION_TIME: int = 7  # Default expiration time in days for shortened URLs
     
     API_V1_STR: str = "/api/v1"

@@ -38,7 +38,7 @@ async def generate_url(url: URLBaseModel, session: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="URL already exists")
     
     url_data["code"] = hash_code
-    url_data["short_url"] = f"http://localhost:8000/api/v1/url/{url_data['code']}"
+    url_data["short_url"] = f"{settings.HOST_URL}/api/v1/url/{url_data['code']}"
     url_data["expiration_time"] = (datetime.datetime.now() + datetime.timedelta(days=settings.EXPIRATION_TIME)).isoformat()
     url_data["created_at"] = datetime.datetime.now().isoformat()
     url_data["updated_at"] = datetime.datetime.now().isoformat()

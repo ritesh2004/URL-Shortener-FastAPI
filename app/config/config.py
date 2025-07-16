@@ -19,6 +19,12 @@ class Settings(BaseSettings):
     EXPIRATION_TIME: int = 7  # Default expiration time in days for shortened URLs
     
     API_V1_STR: str = "/api/v1"
+    
+    REDIS_HOST: str = "localhost"  # Redis host for rate limiting
+    REDIS_PORT: int = 6379  # Redis port for rate limiting
+    REDIS_DB: int = 0
+    RATE_LIMIT_WINDOW: int = 60  # Rate limit window in seconds
+    RATE_LIMIT_MAX_REQUESTS: int = 10
 
     # MySQL Database Configuration
     # Replace with your actual MySQL credentials

@@ -1,0 +1,52 @@
+name: URL Shortener EC2 Deploy
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+            - name: create .env file
+              run: |
+                echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> .env
+                echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> .env
+                echo "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" >> .env
+                echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> .env
+                echo "MYSQL_DB=${{ secrets.MYSQL_DB }}" >> .env
+                echo "EXPIRATION_TIME=${{ secrets.EXPIRATION_TIME }}" >> .env
+                echo "HOST_URL=${{ secrets.HOST_URL }}" >> .env
+                echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+                echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
+                echo "REDIS_DB=${{ secrets.REDIS_DB }}" >> .env
+                echo "RATE_LIMIT_WINDOW=${{ secrets.RATE_LIMIT_WINDOW }}" >> .env
+                echo "RATE_LIMIT_MAX_REQUESTS=${{ secrets.RATE_LIMIT_MAX_REQUESTS }}" >> .env
+            - name: Login to DockerHub
+              run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+            - name: Build Docker image
+              run: docker build -t riteshdev29/url_shortener:latest .
+            - name: Push Docker image
+              run: docker push riteshdev29/url_shortener:latest
+
+    deploy:
+        needs: build
+        runs-on: aws_urlshortener
+        steps:
+            - name: Pull Docker image
+              run: docker pull riteshdev29/url_shortener:latest
+            - name: Stop and remove existing container
+              run: |
+                docker stop url_shortener || true
+                docker rm url_shortener || true
+            - name: Run Docker container
+              run: |
+                docker run -d \
+                  --name url_shortener \
+                  --restart unless-stopped \
+                  -p 80:80 \
+                  --env-file .env \
+                  riteshdev29/url_shortener:latest

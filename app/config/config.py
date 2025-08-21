@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     REDIS_HOST: str = "localhost"  # Redis host for rate limiting
     REDIS_PORT: int = 6379  # Redis port for rate limiting
     REDIS_DB: int = 0
+    REDIS_USER: str = "default"
+    REDIS_PASSWORD: str = "your_redis_password"
     RATE_LIMIT_WINDOW: int = 60  # Rate limit window in seconds
     RATE_LIMIT_MAX_REQUESTS: int = 10
 

@@ -1,9 +1,11 @@
+from datetime import datetime
 from fastapi import FastAPI
 from fastapi.responses  import JSONResponse
 from .routes import routes
 from app.config.db import create_db_and_tables
 from app.config.config import settings
 from contextlib import asynccontextmanager
+from datetime import datetime
 # import redis
 
 # redis_client = redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB, decode_responses=True, username=settings.REDIS_USER, password=settings.REDIS_PASSWORD)
@@ -42,6 +44,11 @@ app = FastAPI(
 #         return JSONResponse(status_code=500, content={"detail": "Redis error occurred", "error": str(e)})
 
 app.include_router(routes.router, prefix=settings.API_V1_STR)
+
+@app.get("/healthz", tags=["Health Check"])
+async def health_check():
+    timestamp = datetime.now().isoformat()
+    return {"status": "healthy", "timestamp": timestamp}
 
 @app.get("/", tags=["Root"])
 async def read_root():
